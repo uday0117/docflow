@@ -1,5 +1,7 @@
 import 'package:docflow/modules/image_to_pdf/view/image_to_pdf_view.dart';
 import 'package:docflow/modules/merge_pdf/view/merge_pdf_view.dart';
+import 'package:docflow/modules/protect_pdf/view/protect_pdf_view.dart';
+import 'package:docflow/modules/unlock_pdf/view/unlock_pdf_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -44,11 +46,22 @@ class HomeView extends StatelessWidget {
                       Get.to(() => MergePdfView());
                       break;
 
-                    default:
-                      Get.snackbar(
-                        'Coming Soon',
-                        '${tools[index]['title']} is under development',
-                      );
+                    case 2:
+                      Get.snackbar('Coming Soon', 'Split PDF module');
+                      break;
+
+                    case 3:
+                      Get.snackbar('Coming Soon', 'PDF to Image module');
+                      break;
+
+                    case 4:
+                      Get.to(() => ProtectPdfView());
+                      break;
+
+                    case 5:
+                      Get.to(() => UnlockPdfView());
+
+                      break;
                   }
                 },
                 child: Column(
