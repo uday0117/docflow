@@ -47,6 +47,8 @@ dependencies:
   image_picker: ^1.2.2
   open_filex: ^4.7.0
   device_info_plus: ^12.4.0
+  image: ^4.8.0
+  pdfx: ^2.9.2
 
 dev_dependencies:
   flutter_test:

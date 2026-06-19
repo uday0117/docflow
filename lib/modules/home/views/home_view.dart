@@ -1,5 +1,6 @@
 import 'package:docflow/modules/image_to_pdf/view/image_to_pdf_view.dart';
 import 'package:docflow/modules/merge_pdf/view/merge_pdf_view.dart';
+import 'package:docflow/modules/pdf_to_image/view/pdf_to_image_view.dart';
 import 'package:docflow/modules/protect_pdf/view/protect_pdf_view.dart';
 import 'package:docflow/modules/unlock_pdf/view/unlock_pdf_view.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class HomeView extends StatelessWidget {
                       break;
 
                     case 3:
-                      Get.snackbar('Coming Soon', 'PDF to Image module');
+                      Get.to(() => PdfToImageView());
                       break;
 
                     case 4:
