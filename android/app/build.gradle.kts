@@ -11,11 +11,15 @@ plugins {
 android {
     namespace = "com.uksolutions.docflow"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
-
+    ndkVersion = "28.2.13676358"
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+     packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
 
     kotlinOptions {
