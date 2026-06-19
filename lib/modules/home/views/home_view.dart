@@ -47,7 +47,7 @@ class HomeView extends StatelessWidget {
                       break;
 
                     case 2:
-                      Get.snackbar('Coming Soon', 'Split PDF module');
+                      Get.snackbar('Coming Soon', 'Split PDF');
                       break;
 
                     case 3:
