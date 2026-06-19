@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 
 class MergePdfController extends GetxController {
   final RxList<File> selectedFiles = <File>[].obs;
-  final MergePdfService _service = MergePdfService();
-
   final RxBool isMerging = false.obs;
+
+  final MergePdfService _service = MergePdfService();
 
   Future<void> pickPdfFiles() async {
     final result = await FilePicker.platform.pickFiles(
@@ -29,19 +29,21 @@ class MergePdfController extends GetxController {
 
   Future<void> mergePdfs() async {
     if (selectedFiles.length < 2) {
-      Get.snackbar('Error', 'Please select at least 2 PDFs');
+      Get.snackbar('Error', 'Please select at least 2 PDF files');
       return;
     }
 
     try {
       isMerging.value = true;
 
-      final mergedFile = await _service.mergePdfs(selectedFiles);
+      final mergedFile = await _service.mergePdfs(selectedFiles.toList());
 
       Get.snackbar('Success', 'PDF merged successfully');
 
       print('Merged File: ${mergedFile.path}');
     } catch (e) {
+      print('Merge Error: $e');
+
       Get.snackbar('Error', e.toString());
     } finally {
       isMerging.value = false;
