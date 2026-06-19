@@ -1,10 +1,11 @@
 import 'dart:io';
 
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-class PdfService {
+import '../../../core/services/file_storage_service.dart';
+
+class ImageToPdfService {
   Future<File> createPdf(List<File> images) async {
     final pdf = pw.Document();
 
@@ -23,25 +24,15 @@ class PdfService {
       );
     }
 
-    Directory baseDir;
-
-    if (Platform.isAndroid) {
-      baseDir = (await getExternalStorageDirectory())!;
-    } else {
-      baseDir = await getApplicationDocumentsDirectory();
-    }
-
-    final docFlowDir = Directory('${baseDir.path}/DocFlow');
-
-    if (!await docFlowDir.exists()) {
-      await docFlowDir.create(recursive: true);
-    }
+    final directory = await FileStorageService.getDocFlowDirectory();
 
     final file = File(
-      '${docFlowDir.path}/docflow_${DateTime.now().millisecondsSinceEpoch}.pdf',
+      '${directory.path}/image_to_pdf_${DateTime.now().millisecondsSinceEpoch}.pdf',
     );
 
     await file.writeAsBytes(await pdf.save());
+
+    print('Generated PDF: ${file.path}');
 
     return file;
   }

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:path_provider/path_provider.dart';
+import 'package:docflow/core/services/file_storage_service.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class ProtectPdfService {
@@ -19,7 +19,7 @@ class ProtectPdfService {
 
     document.dispose();
 
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = await FileStorageService.getDocFlowDirectory();
 
     final outputFile = File(
       '${directory.path}/protected_${DateTime.now().millisecondsSinceEpoch}.pdf',

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:docflow/modules/image_to_pdf/service/pdf_service.dart';
+import 'package:docflow/modules/image_to_pdf/service/image_to_pdf_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +9,7 @@ import 'package:share_plus/share_plus.dart';
 
 class ImageToPdfController extends GetxController {
   final ImagePicker picker = ImagePicker();
-  final PdfService pdfService = PdfService();
+  final ImageToPdfService imageToPdfService = ImageToPdfService();
   Rx<File?> generatedPdf = Rx<File?>(null);
 
   RxList<File> selectedImages = <File>[].obs;
@@ -54,7 +54,7 @@ class ImageToPdfController extends GetxController {
     try {
       isGenerating.value = true;
 
-      final pdfFile = await pdfService.createPdf(selectedImages);
+      final pdfFile = await imageToPdfService.createPdf(selectedImages);
 
       generatedPdf.value = pdfFile;
       Get.snackbar('Success', 'PDF Created Successfully');

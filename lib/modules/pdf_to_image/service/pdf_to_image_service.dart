@@ -1,14 +1,13 @@
 import 'dart:io';
 
-import 'package:path_provider/path_provider.dart';
+import 'package:docflow/core/services/file_storage_service.dart';
 import 'package:pdfx/pdfx.dart';
 
 class PdfToImageService {
   Future<List<File>> convertPdfToImages(File pdfFile) async {
     final PdfDocument document = await PdfDocument.openFile(pdfFile.path);
 
-    final Directory directory = await getApplicationDocumentsDirectory();
-
+    final Directory directory = await FileStorageService.getDocFlowDirectory();
     final List<File> generatedImages = [];
 
     for (int i = 1; i <= document.pagesCount; i++) {
