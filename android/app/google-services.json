@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "550442573378",
+    "project_id": "doc-flow-d7d48",
+    "storage_bucket": "doc-flow-d7d48.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550442573378:android:57e7ec1204d7fb65d097db",
+        "android_client_info": {
+          "package_name": "com.uksolutions.docflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADuDHPqzWkj0VW97zWHXBPlaKHtTvB7Wc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
