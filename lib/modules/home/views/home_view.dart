@@ -1,4 +1,5 @@
 import 'package:docflow/modules/image_to_pdf/view/image_to_pdf_view.dart';
+import 'package:docflow/modules/merge_pdf/view/merge_pdf_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,7 +35,21 @@ class HomeView extends StatelessWidget {
               child: InkWell(
                 borderRadius: BorderRadius.circular(12),
                 onTap: () {
-                  Get.to(() => ImageToPdfView());
+                  switch (index) {
+                    case 0:
+                      Get.to(() => ImageToPdfView());
+                      break;
+
+                    case 1:
+                      Get.to(() => MergePdfView());
+                      break;
+
+                    default:
+                      Get.snackbar(
+                        'Coming Soon',
+                        '${tools[index]['title']} is under development',
+                      );
+                  }
                 },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
