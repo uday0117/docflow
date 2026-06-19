@@ -1,12 +1,10 @@
-import 'package:docflow/app/themes/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'app/routes/app_pages.dart';
-import 'app/routes/app_routes.dart';
 import 'firebase_options.dart';
+import 'modules/home/views/home_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,11 +22,9 @@ class DocFlowApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'DocFlow',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.home,
-      getPages: AppPages.routes,
+      title: 'DocFlow',
+      home: const HomeView(),
     );
   }
 }
