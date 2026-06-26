@@ -1,8 +1,7 @@
 class AdConstants {
   // Publisher ID: ca-app-pub-1451522103593938
-  // TODO: Replace androidAppId with your actual AdMob App ID from AdMob Console > App Settings
   static const String androidAppId =
-      'ca-app-pub-1451522103593938~4591967801'; // test app id - replace in prod
+      'ca-app-pub-1451522103593938~4591967801';
 
   // Real ad unit IDs from AdMob dashboard
   static const String bannerAdUnitId = 'ca-app-pub-1451522103593938/5932969638';
