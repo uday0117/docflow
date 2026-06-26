@@ -13,8 +13,6 @@ class ProtectPdfService {
     document.security.userPassword = password;
     document.security.ownerPassword = password;
 
-    print('Password Applied: ${document.security.userPassword}');
-
     final List<int> protectedBytes = await document.save();
 
     document.dispose();

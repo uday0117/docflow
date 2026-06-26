@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/services/ad_service.dart';
+
 class ImageToPdfController extends GetxController {
   final ImagePicker picker = ImagePicker();
   final ImageToPdfService imageToPdfService = ImageToPdfService();
@@ -28,7 +30,6 @@ class ImageToPdfController extends GetxController {
 
   Future<void> pickFromGallery() async {
     final List<XFile> images = await picker.pickMultiImage(imageQuality: 100);
-
     selectedImages.addAll(images.map((e) => File(e.path)));
   }
 
@@ -55,11 +56,13 @@ class ImageToPdfController extends GetxController {
       isGenerating.value = true;
 
       final pdfFile = await imageToPdfService.createPdf(selectedImages);
-
       generatedPdf.value = pdfFile;
-      Get.snackbar('Success', 'PDF Created Successfully');
 
-      print(pdfFile.path);
+      AdService.to.showInterstitialAd(
+        onDismissed: () {
+          Get.snackbar('Success', 'PDF Created Successfully!');
+        },
+      );
     } catch (e) {
       Get.snackbar('Error', e.toString());
     } finally {
@@ -69,13 +72,11 @@ class ImageToPdfController extends GetxController {
 
   Future<void> openPdf() async {
     if (generatedPdf.value == null) return;
-
     await OpenFilex.open(generatedPdf.value!.path);
   }
 
   Future<void> sharePdf() async {
     if (generatedPdf.value == null) return;
-
     await SharePlus.instance.share(
       ShareParams(
         files: [XFile(generatedPdf.value!.path)],
@@ -86,5 +87,6 @@ class ImageToPdfController extends GetxController {
 
   void clearImages() {
     selectedImages.clear();
+    generatedPdf.value = null;
   }
 }

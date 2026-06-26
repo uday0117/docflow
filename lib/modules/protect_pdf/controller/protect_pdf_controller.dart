@@ -4,11 +4,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:open_filex/open_filex.dart';
 
+import '../../../core/services/ad_service.dart';
 import '../service/protect_pdf_service.dart';
 
 class ProtectPdfController extends GetxController {
   final Rx<File?> selectedFile = Rx<File?>(null);
   final RxBool isProcessing = false.obs;
+  Rx<File?> protectedFile = Rx<File?>(null);
 
   final ProtectPdfService _service = ProtectPdfService();
 
@@ -19,8 +21,8 @@ class ProtectPdfController extends GetxController {
     );
 
     if (result == null) return;
-
     selectedFile.value = File(result.files.single.path!);
+    protectedFile.value = null;
   }
 
   Future<void> protectPdf(String password) async {
@@ -30,23 +32,26 @@ class ProtectPdfController extends GetxController {
     }
 
     if (password.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter password');
+      Get.snackbar('Error', 'Please enter a password');
       return;
     }
 
     try {
       isProcessing.value = true;
 
-      final protectedFile = await _service.protectPdf(
+      final file = await _service.protectPdf(
         selectedFile.value!,
         password.trim(),
       );
 
-      Get.snackbar('Success', 'Protected PDF created successfully');
+      protectedFile.value = file;
 
-      print('Protected File: ${protectedFile.path}');
-
-      await OpenFilex.open(protectedFile.path);
+      AdService.to.showInterstitialAd(
+        onDismissed: () {
+          Get.snackbar('Success', 'PDF protected successfully!');
+          OpenFilex.open(file.path);
+        },
+      );
     } catch (e) {
       Get.snackbar('Error', e.toString());
     } finally {

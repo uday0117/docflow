@@ -32,8 +32,6 @@ class ImageToPdfService {
 
     await file.writeAsBytes(await pdf.save());
 
-    print('Generated PDF: ${file.path}');
-
     return file;
   }
 }

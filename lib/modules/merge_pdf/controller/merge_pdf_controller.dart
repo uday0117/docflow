@@ -3,10 +3,15 @@ import 'dart:io';
 import 'package:docflow/modules/merge_pdf/service/merge_pdf_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../../../core/services/ad_service.dart';
 
 class MergePdfController extends GetxController {
   final RxList<File> selectedFiles = <File>[].obs;
   final RxBool isMerging = false.obs;
+  Rx<File?> mergedFile = Rx<File?>(null);
 
   final MergePdfService _service = MergePdfService();
 
@@ -36,18 +41,34 @@ class MergePdfController extends GetxController {
     try {
       isMerging.value = true;
 
-      final mergedFile = await _service.mergePdfs(selectedFiles.toList());
+      final file = await _service.mergePdfs(selectedFiles.toList());
+      mergedFile.value = file;
 
-      Get.snackbar('Success', 'PDF merged successfully');
-
-      print('Merged File: ${mergedFile.path}');
+      AdService.to.showInterstitialAd(
+        onDismissed: () {
+          Get.snackbar('Success', 'PDFs merged successfully!');
+        },
+      );
     } catch (e) {
-      print('Merge Error: $e');
-
       Get.snackbar('Error', e.toString());
     } finally {
       isMerging.value = false;
     }
+  }
+
+  Future<void> openMerged() async {
+    if (mergedFile.value == null) return;
+    await OpenFilex.open(mergedFile.value!.path);
+  }
+
+  Future<void> shareMerged() async {
+    if (mergedFile.value == null) return;
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(mergedFile.value!.path)],
+        text: 'Merged PDF from DocFlow',
+      ),
+    );
   }
 
   void removeFile(int index) {

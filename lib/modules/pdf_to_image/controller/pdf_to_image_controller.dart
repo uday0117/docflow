@@ -5,15 +5,14 @@ import 'package:get/get.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/services/ad_service.dart';
 import '../service/pdf_to_image_service.dart';
 
 class PdfToImageController extends GetxController {
   final PdfToImageService _service = PdfToImageService();
 
   final Rx<File?> selectedPdf = Rx<File?>(null);
-
   final RxList<File> generatedImages = <File>[].obs;
-
   final RxBool isLoading = false.obs;
 
   Future<void> pickPdf() async {
@@ -41,7 +40,11 @@ class PdfToImageController extends GetxController {
         selectedPdf.value!,
       );
 
-      Get.snackbar('Success', '${generatedImages.length} images generated');
+      AdService.to.showInterstitialAd(
+        onDismissed: () {
+          Get.snackbar('Success', '${generatedImages.length} images generated');
+        },
+      );
     } catch (e) {
       Get.snackbar('Error', e.toString());
     } finally {
@@ -54,6 +57,8 @@ class PdfToImageController extends GetxController {
   }
 
   Future<void> shareImage(File file) async {
-    await Share.shareXFiles([XFile(file.path)]);
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(file.path)]),
+    );
   }
 }
