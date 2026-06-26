@@ -46,7 +46,11 @@ class HomeView extends StatelessWidget {
       ),
       title: const Text(
         'DocFlow',
-        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20, letterSpacing: -0.5),
+        style: TextStyle(
+          fontWeight: FontWeight.w800,
+          fontSize: 20,
+          letterSpacing: -0.5,
+        ),
       ),
       actions: [
         Obx(() {
@@ -55,7 +59,10 @@ class HomeView extends StatelessWidget {
               padding: const EdgeInsets.only(right: 4),
               child: Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     gradient: AppColors.primaryGradient,
                     borderRadius: BorderRadius.circular(20),
@@ -63,11 +70,19 @@ class HomeView extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.workspace_premium_rounded, color: Colors.white, size: 14),
+                      Icon(
+                        Icons.workspace_premium_rounded,
+                        color: Colors.white,
+                        size: 14,
+                      ),
                       SizedBox(width: 4),
                       Text(
                         'PRO',
-                        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ],
                   ),
@@ -86,10 +101,15 @@ class HomeView extends StatelessWidget {
   }
 
   void _showMenu(BuildContext context) {
+    final maxH = MediaQuery.of(context).size.height * 0.75;
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _MenuSheet(),
+      builder: (ctx) => ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxH),
+        child: _MenuSheet(),
+      ),
     );
   }
 }
@@ -113,7 +133,9 @@ class _HomeBody extends StatelessWidget {
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.45),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.45),
               ),
             ),
           ),
@@ -149,56 +171,56 @@ class _HomeBody extends StatelessWidget {
   }
 
   static List<_ToolDef> _toolDefinitions() => [
-        _ToolDef(
-          title: 'Image to PDF',
-          subtitle: 'Convert photos & images to PDF',
-          icon: Icons.image_rounded,
-          color: AppColors.imageToPdf,
-          onTap: () => Get.to(() => ImageToPdfView()),
-        ),
-        _ToolDef(
-          title: 'Merge PDF',
-          subtitle: 'Combine multiple PDFs into one',
-          icon: Icons.merge_rounded,
-          color: AppColors.mergePdf,
-          onTap: () => Get.to(() => MergePdfView()),
-        ),
-        _ToolDef(
-          title: 'Split PDF',
-          subtitle: 'Extract pages from a PDF',
-          icon: Icons.call_split_rounded,
-          color: AppColors.splitPdf,
-          onTap: () => Get.to(() => SplitPdfView()),
-        ),
-        _ToolDef(
-          title: 'Compress PDF',
-          subtitle: 'Reduce file size without quality loss',
-          icon: Icons.compress_rounded,
-          color: AppColors.compressPdf,
-          onTap: () => Get.to(() => CompressPdfView()),
-        ),
-        _ToolDef(
-          title: 'PDF to Image',
-          subtitle: 'Export PDF pages as PNG images',
-          icon: Icons.photo_library_rounded,
-          color: AppColors.pdfToImage,
-          onTap: () => Get.to(() => PdfToImageView()),
-        ),
-        _ToolDef(
-          title: 'Protect PDF',
-          subtitle: 'Lock PDF with a password',
-          icon: Icons.lock_rounded,
-          color: AppColors.protectPdf,
-          onTap: () => Get.to(() => ProtectPdfView()),
-        ),
-        _ToolDef(
-          title: 'Unlock PDF',
-          subtitle: 'Remove password from a PDF',
-          icon: Icons.lock_open_rounded,
-          color: AppColors.unlockPdf,
-          onTap: () => Get.to(() => UnlockPdfView()),
-        ),
-      ];
+    _ToolDef(
+      title: 'Image to PDF',
+      subtitle: 'Convert photos & images to PDF',
+      icon: Icons.image_rounded,
+      color: AppColors.imageToPdf,
+      onTap: () => Get.to(() => ImageToPdfView()),
+    ),
+    _ToolDef(
+      title: 'Merge PDF',
+      subtitle: 'Combine multiple PDFs into one',
+      icon: Icons.merge_rounded,
+      color: AppColors.mergePdf,
+      onTap: () => Get.to(() => MergePdfView()),
+    ),
+    _ToolDef(
+      title: 'Split PDF',
+      subtitle: 'Extract pages from a PDF',
+      icon: Icons.call_split_rounded,
+      color: AppColors.splitPdf,
+      onTap: () => Get.to(() => SplitPdfView()),
+    ),
+    _ToolDef(
+      title: 'Compress PDF',
+      subtitle: 'Reduce file size without quality loss',
+      icon: Icons.compress_rounded,
+      color: AppColors.compressPdf,
+      onTap: () => Get.to(() => CompressPdfView()),
+    ),
+    _ToolDef(
+      title: 'PDF to Image',
+      subtitle: 'Export PDF pages as PNG images',
+      icon: Icons.photo_library_rounded,
+      color: AppColors.pdfToImage,
+      onTap: () => Get.to(() => PdfToImageView()),
+    ),
+    _ToolDef(
+      title: 'Protect PDF',
+      subtitle: 'Lock PDF with a password',
+      icon: Icons.lock_rounded,
+      color: AppColors.protectPdf,
+      onTap: () => Get.to(() => ProtectPdfView()),
+    ),
+    _ToolDef(
+      title: 'Unlock PDF',
+      subtitle: 'Remove password from a PDF',
+      icon: Icons.lock_open_rounded,
+      color: AppColors.unlockPdf,
+      onTap: () => Get.to(() => UnlockPdfView()),
+    ),
+  ];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -244,10 +266,9 @@ class _RecentFilesSection extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.45),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.45),
                   ),
                 ),
                 const Spacer(),
@@ -264,10 +285,9 @@ class _RecentFilesSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.35),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.35),
                       ),
                     ),
                   ),
@@ -283,12 +303,9 @@ class _RecentFilesSection extends StatelessWidget {
               itemBuilder: (ctx, i) {
                 final f = files[i];
                 final color = _toolColors[f.tool] ?? AppColors.primary;
-                final icon = _toolIcons[f.tool] ?? Icons.insert_drive_file_rounded;
-                return _RecentFileChip(
-                  file: f,
-                  color: color,
-                  icon: icon,
-                );
+                final icon =
+                    _toolIcons[f.tool] ?? Icons.insert_drive_file_rounded;
+                return _RecentFileChip(file: f, color: color, icon: icon);
               },
             ),
           ),
@@ -337,9 +354,7 @@ class _RecentFileChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: color.withValues(alpha: 0.2),
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
           boxShadow: isDark
               ? []
               : [
@@ -368,10 +383,9 @@ class _RecentFileChip extends StatelessWidget {
                   _timeAgo(file.createdAt),
                   style: TextStyle(
                     fontSize: 10,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.4),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.4),
                   ),
                 ),
               ],
@@ -559,10 +573,9 @@ class _ToolListItem extends StatelessWidget {
                       tool.subtitle,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.5),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
                     ),
                   ],
@@ -570,10 +583,9 @@ class _ToolListItem extends StatelessWidget {
               ),
               Icon(
                 Icons.chevron_right_rounded,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.25),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.25),
                 size: 22,
               ),
             ],
@@ -591,109 +603,111 @@ class _MenuSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPad = MediaQuery.of(context).viewPadding.bottom + 16;
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+      padding: EdgeInsets.fromLTRB(20, 12, 20, bottomPad),
       child: SingleChildScrollView(
         child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(2),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                color: Colors.grey.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-          ),
-          Obx(() {
-            if (ProService.to.isPro.value) return const SizedBox.shrink();
-            return Column(
-              children: [
-                _menuItem(
-                  context,
-                  icon: Icons.workspace_premium_rounded,
-                  color: AppColors.primary,
-                  title: 'Get DocFlow Pro',
-                  subtitle: 'Remove all ads forever — \$1.99',
-                  onTap: () {
-                    Get.back();
-                    ProUpgradeSheet.show();
-                  },
-                ),
-                const SizedBox(height: 8),
-              ],
-            );
-          }),
-          _menuItem(
-            context,
-            icon: Icons.star_rounded,
-            color: Colors.amber,
-            title: 'Rate DocFlow',
-            subtitle: 'Enjoying the app? Leave a review!',
-            onTap: () async {
-              Get.back();
-              final inAppReview = InAppReview.instance;
-              if (await inAppReview.isAvailable()) {
-                inAppReview.requestReview();
-              } else {
-                launchUrl(Uri.parse(_playStoreUrl));
-              }
-            },
-          ),
-          const SizedBox(height: 8),
-          _menuItem(
-            context,
-            icon: Icons.share_rounded,
-            color: AppColors.imageToPdf,
-            title: 'Share App',
-            subtitle: 'Share DocFlow with friends',
-            onTap: () {
-              Get.back();
-              SharePlus.instance.share(
-                ShareParams(
-                  text:
-                      'Try DocFlow – Smart PDF Tools! Free & powerful.\n$_playStoreUrl',
-                ),
+            Obx(() {
+              if (ProService.to.isPro.value) return const SizedBox.shrink();
+              return Column(
+                children: [
+                  _menuItem(
+                    context,
+                    icon: Icons.workspace_premium_rounded,
+                    color: AppColors.primary,
+                    title: 'Get DocFlow Pro',
+                    subtitle: 'Remove all ads forever — \$1.99',
+                    onTap: () {
+                      Get.back();
+                      ProUpgradeSheet.show();
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                ],
               );
-            },
-          ),
-          const SizedBox(height: 8),
-          _menuItem(
-            context,
-            icon: Icons.privacy_tip_rounded,
-            color: AppColors.unlockPdf,
-            title: 'Privacy Policy',
-            subtitle: 'How we handle your data',
-            onTap: () {
-              Get.back();
-              launchUrl(
-                Uri.parse('https://uday0117.github.io/docflow-docs/privacy/'),
-                mode: LaunchMode.externalApplication,
-              );
-            },
-          ),
-          const SizedBox(height: 8),
-          _menuItem(
-            context,
-            icon: Icons.gavel_rounded,
-            color: AppColors.splitPdf,
-            title: 'Terms & Conditions',
-            subtitle: 'Rules and guidelines for using the app',
-            onTap: () {
-              Get.back();
-              launchUrl(
-                Uri.parse('https://uday0117.github.io/docflow-docs/terms/'),
-                mode: LaunchMode.externalApplication,
-              );
-            },
-          ),
-        ],
-      ),
+            }),
+            _menuItem(
+              context,
+              icon: Icons.star_rounded,
+              color: Colors.amber,
+              title: 'Rate DocFlow',
+              subtitle: 'Enjoying the app? Leave a review!',
+              onTap: () async {
+                Get.back();
+                final inAppReview = InAppReview.instance;
+                if (await inAppReview.isAvailable()) {
+                  inAppReview.requestReview();
+                } else {
+                  launchUrl(Uri.parse(_playStoreUrl));
+                }
+              },
+            ),
+            const SizedBox(height: 8),
+            _menuItem(
+              context,
+              icon: Icons.share_rounded,
+              color: AppColors.imageToPdf,
+              title: 'Share App',
+              subtitle: 'Share DocFlow with friends',
+              onTap: () {
+                Get.back();
+                SharePlus.instance.share(
+                  ShareParams(
+                    text:
+                        'Try DocFlow – Smart PDF Tools! Free & powerful.\n$_playStoreUrl',
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            _menuItem(
+              context,
+              icon: Icons.privacy_tip_rounded,
+              color: AppColors.unlockPdf,
+              title: 'Privacy Policy',
+              subtitle: 'How we handle your data',
+              onTap: () {
+                Get.back();
+                launchUrl(
+                  Uri.parse('https://uday0117.github.io/docflow-docs/privacy/'),
+                  mode: LaunchMode.externalApplication,
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            _menuItem(
+              context,
+              icon: Icons.gavel_rounded,
+              color: AppColors.splitPdf,
+              title: 'Terms & Conditions',
+              subtitle: 'Rules and guidelines for using the app',
+              onTap: () {
+                Get.back();
+                launchUrl(
+                  Uri.parse('https://uday0117.github.io/docflow-docs/terms/'),
+                  mode: LaunchMode.externalApplication,
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }
@@ -730,25 +744,32 @@ class _MenuSheet extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 14)),
-                    Text(subtitle,
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.5))),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_rounded,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.3),
-                  size: 20),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.3),
+                size: 20,
+              ),
             ],
           ),
         ),
