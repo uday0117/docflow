@@ -4,12 +4,13 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
 import '../../../core/widgets/df_widgets.dart';
+import '../../../core/widgets/rewarded_ad_card.dart';
 import '../controller/compress_pdf_controller.dart';
 
 class CompressPdfView extends StatelessWidget {
   CompressPdfView({super.key});
 
-  final controller = Get.put(CompressPdfController());
+  final controller = CompressPdfController.to;
   static const _color = AppColors.compressPdf;
 
   @override
@@ -57,8 +58,11 @@ class CompressPdfView extends StatelessWidget {
                         detail: '${controller.formattedOriginalSize} → ${controller.formattedCompressedSize}',
                         onOpen: controller.openFile,
                         onShare: controller.shareFile,
+                        onSave: controller.saveToDevice,
                         color: _color,
                       ),
+                      const SizedBox(height: 12),
+                      const RewardedAdCard(),
                     ],
                   ),
                 ),

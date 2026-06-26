@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
 import '../../../core/widgets/df_widgets.dart';
+import '../../../core/widgets/rewarded_ad_card.dart';
 import '../controller/protect_pdf_controller.dart';
 
 class ProtectPdfView extends StatefulWidget {
@@ -14,7 +15,7 @@ class ProtectPdfView extends StatefulWidget {
 }
 
 class _ProtectPdfViewState extends State<ProtectPdfView> {
-  final controller = Get.put(ProtectPdfController());
+  final controller = ProtectPdfController.to;
   final _pwdController = TextEditingController();
   final _confirmController = TextEditingController();
   bool _showPwd = false;
@@ -62,12 +63,19 @@ class _ProtectPdfViewState extends State<ProtectPdfView> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: DfResultCard(
-                    message: 'PDF Protected!',
-                    detail: 'Your PDF is now password-protected',
-                    onOpen: () {},
-                    onShare: () {},
-                    color: _color,
+                  child: Column(
+                    children: [
+                      DfResultCard(
+                        message: 'PDF Protected!',
+                        detail: 'Your PDF is now password-protected',
+                        onOpen: controller.openFile,
+                        onShare: controller.shareFile,
+                        onSave: controller.saveToDevice,
+                        color: _color,
+                      ),
+                      const SizedBox(height: 12),
+                      const RewardedAdCard(),
+                    ],
                   ),
                 ),
               )

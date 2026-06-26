@@ -6,9 +6,16 @@ import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/services/ad_service.dart';
+import '../../../core/services/analytics_service.dart';
+import '../../../core/services/file_storage_service.dart';
+import '../../../core/services/recent_files_service.dart';
+import '../../../core/services/review_service.dart';
 import '../service/compress_pdf_service.dart';
 
 class CompressPdfController extends GetxController {
+  static CompressPdfController get to =>
+      Get.put(CompressPdfController(), permanent: true);
+
   final CompressPdfService _service = CompressPdfService();
 
   Rx<File?> selectedFile = Rx<File?>(null);
@@ -23,7 +30,6 @@ class CompressPdfController extends GetxController {
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
-
     if (result == null || result.paths.isEmpty) return;
 
     final file = File(result.paths.first!);
@@ -52,6 +58,15 @@ class CompressPdfController extends GetxController {
       compressedFile.value = output;
       final stat = await output.stat();
       compressedSize.value = stat.size;
+
+      RecentFilesService.to.addFile(
+        path: output.path,
+        tool: 'compress_pdf',
+        toolLabel: 'Compress PDF',
+      );
+
+      AnalyticsService.to.logToolUsed('compress_pdf');
+      ReviewService.to.onToolCompleted();
 
       AdService.to.showInterstitialAd(
         onDismissed: () {
@@ -84,6 +99,17 @@ class CompressPdfController extends GetxController {
         text: 'Compressed PDF from DocFlow',
       ),
     );
+  }
+
+  Future<File?> saveToDevice() async {
+    if (compressedFile.value == null) return null;
+    final saved = await FileStorageService.saveToDownloads(compressedFile.value!);
+    RecentFilesService.to.addFile(
+      path: saved.path,
+      tool: 'compress_pdf',
+      toolLabel: 'Compress PDF',
+    );
+    return saved;
   }
 
   String _formatBytes(int bytes) {

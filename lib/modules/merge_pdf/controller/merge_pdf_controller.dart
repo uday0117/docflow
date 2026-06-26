@@ -7,8 +7,15 @@ import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/services/ad_service.dart';
+import '../../../core/services/analytics_service.dart';
+import '../../../core/services/file_storage_service.dart';
+import '../../../core/services/recent_files_service.dart';
+import '../../../core/services/review_service.dart';
 
 class MergePdfController extends GetxController {
+  static MergePdfController get to =>
+      Get.put(MergePdfController(), permanent: true);
+
   final RxList<File> selectedFiles = <File>[].obs;
   final RxBool isMerging = false.obs;
   Rx<File?> mergedFile = Rx<File?>(null);
@@ -21,9 +28,7 @@ class MergePdfController extends GetxController {
       allowedExtensions: ['pdf'],
       allowMultiple: true,
     );
-
     if (result == null) return;
-
     selectedFiles.assignAll(
       result.paths
           .where((path) => path != null)
@@ -40,9 +45,17 @@ class MergePdfController extends GetxController {
 
     try {
       isMerging.value = true;
-
       final file = await _service.mergePdfs(selectedFiles.toList());
       mergedFile.value = file;
+
+      RecentFilesService.to.addFile(
+        path: file.path,
+        tool: 'merge_pdf',
+        toolLabel: 'Merge PDF',
+      );
+
+      AnalyticsService.to.logToolUsed('merge_pdf');
+      ReviewService.to.onToolCompleted();
 
       AdService.to.showInterstitialAd(
         onDismissed: () {
@@ -69,6 +82,17 @@ class MergePdfController extends GetxController {
         text: 'Merged PDF from DocFlow',
       ),
     );
+  }
+
+  Future<File?> saveToDevice() async {
+    if (mergedFile.value == null) return null;
+    final saved = await FileStorageService.saveToDownloads(mergedFile.value!);
+    RecentFilesService.to.addFile(
+      path: saved.path,
+      tool: 'merge_pdf',
+      toolLabel: 'Merge PDF',
+    );
+    return saved;
   }
 
   void removeFile(int index) {

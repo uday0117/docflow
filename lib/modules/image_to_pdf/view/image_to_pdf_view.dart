@@ -9,7 +9,7 @@ import '../controller/image_to_pdf_controller.dart';
 class ImageToPdfView extends StatelessWidget {
   ImageToPdfView({super.key});
 
-  final controller = Get.put(ImageToPdfController());
+  final controller = ImageToPdfController.to;
 
   static const _color = AppColors.imageToPdf;
 
@@ -76,6 +76,7 @@ class ImageToPdfView extends StatelessWidget {
                     detail: generated.path.split('/').last,
                     onOpen: controller.openPdf,
                     onShare: controller.sharePdf,
+                    onSave: controller.saveToDevice,
                     color: _color,
                   ),
                 ),

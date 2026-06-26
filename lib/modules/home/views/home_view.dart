@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/services/pro_service.dart';
+import '../../../core/services/recent_files_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
+import '../../../core/widgets/pro_upgrade_sheet.dart';
 import '../../compress_pdf/view/compress_pdf_view.dart';
 import '../../image_to_pdf/view/image_to_pdf_view.dart';
 import '../../merge_pdf/view/merge_pdf_view.dart';
@@ -45,6 +49,34 @@ class HomeView extends StatelessWidget {
         style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20, letterSpacing: -0.5),
       ),
       actions: [
+        Obx(() {
+          if (ProService.to.isPro.value) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.workspace_premium_rounded, color: Colors.white, size: 14),
+                      SizedBox(width: 4),
+                      Text(
+                        'PRO',
+                        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        }),
         IconButton(
           icon: const Icon(Icons.more_vert_rounded),
           onPressed: () => _showMenu(context),
@@ -69,6 +101,9 @@ class _HomeBody extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       slivers: [
         SliverToBoxAdapter(child: _HeroBanner()),
+        // ── Recent Files ─────────────────────────────────────
+        SliverToBoxAdapter(child: _RecentFilesSection()),
+        // ── Tool List ────────────────────────────────────────
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
@@ -166,6 +201,201 @@ class _HomeBody extends StatelessWidget {
       ];
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Recent Files Section
+// ─────────────────────────────────────────────────────────────────────────────
+class _RecentFilesSection extends StatelessWidget {
+  static const _toolColors = {
+    'image_to_pdf': AppColors.imageToPdf,
+    'merge_pdf': AppColors.mergePdf,
+    'split_pdf': AppColors.splitPdf,
+    'compress_pdf': AppColors.compressPdf,
+    'pdf_to_image': AppColors.pdfToImage,
+    'protect_pdf': AppColors.protectPdf,
+    'unlock_pdf': AppColors.unlockPdf,
+  };
+
+  static const _toolIcons = {
+    'image_to_pdf': Icons.image_rounded,
+    'merge_pdf': Icons.merge_rounded,
+    'split_pdf': Icons.call_split_rounded,
+    'compress_pdf': Icons.compress_rounded,
+    'pdf_to_image': Icons.photo_library_rounded,
+    'protect_pdf': Icons.lock_rounded,
+    'unlock_pdf': Icons.lock_open_rounded,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final files = RecentFilesService.to.files;
+      if (files.isEmpty) return const SizedBox.shrink();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            child: Row(
+              children: [
+                Text(
+                  'RECENT FILES',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.5,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.45),
+                  ),
+                ),
+                const Spacer(),
+                if (files.length > 1)
+                  GestureDetector(
+                    onTap: () {
+                      // Clear all recent files
+                      for (final f in [...files]) {
+                        RecentFilesService.to.removeFile(f.id);
+                      }
+                    },
+                    child: Text(
+                      'Clear',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.35),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 90,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection: Axis.horizontal,
+              itemCount: files.length,
+              itemBuilder: (ctx, i) {
+                final f = files[i];
+                final color = _toolColors[f.tool] ?? AppColors.primary;
+                final icon = _toolIcons[f.tool] ?? Icons.insert_drive_file_rounded;
+                return _RecentFileChip(
+                  file: f,
+                  color: color,
+                  icon: icon,
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    });
+  }
+}
+
+class _RecentFileChip extends StatelessWidget {
+  final RecentFile file;
+  final Color color;
+  final IconData icon;
+
+  const _RecentFileChip({
+    required this.file,
+    required this.color,
+    required this.icon,
+  });
+
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    return '${dt.day}/${dt.month}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: () {
+        if (File(file.path).existsSync()) {
+          OpenFilex.open(file.path);
+        } else {
+          RecentFilesService.to.removeFile(file.id);
+          Get.snackbar('File Not Found', 'This file no longer exists');
+        }
+      },
+      child: Container(
+        width: 140,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: color.withValues(alpha: 0.2),
+          ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color, size: 14),
+                ),
+                const Spacer(),
+                Text(
+                  _timeAgo(file.createdAt),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.4),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              file.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                height: 1.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _HeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -236,7 +466,7 @@ class _HeroBanner extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '7 powerful tools, completely free',
+                        '7 powerful PDF tools in one app',
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 13,
@@ -367,7 +597,8 @@ class _MenuSheet extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-      child: Column(
+      child: SingleChildScrollView(
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
@@ -379,6 +610,25 @@ class _MenuSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
+          Obx(() {
+            if (ProService.to.isPro.value) return const SizedBox.shrink();
+            return Column(
+              children: [
+                _menuItem(
+                  context,
+                  icon: Icons.workspace_premium_rounded,
+                  color: AppColors.primary,
+                  title: 'Get DocFlow Pro',
+                  subtitle: 'Remove all ads forever — \$1.99',
+                  onTap: () {
+                    Get.back();
+                    ProUpgradeSheet.show();
+                  },
+                ),
+                const SizedBox(height: 8),
+              ],
+            );
+          }),
           _menuItem(
             context,
             icon: Icons.star_rounded,
@@ -443,6 +693,7 @@ class _MenuSheet extends StatelessWidget {
             },
           ),
         ],
+      ),
       ),
     );
   }

@@ -6,9 +6,16 @@ import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/services/ad_service.dart';
+import '../../../core/services/analytics_service.dart';
+import '../../../core/services/file_storage_service.dart';
+import '../../../core/services/recent_files_service.dart';
+import '../../../core/services/review_service.dart';
 import '../service/pdf_to_image_service.dart';
 
 class PdfToImageController extends GetxController {
+  static PdfToImageController get to =>
+      Get.put(PdfToImageController(), permanent: true);
+
   final PdfToImageService _service = PdfToImageService();
 
   final Rx<File?> selectedPdf = Rx<File?>(null);
@@ -20,7 +27,6 @@ class PdfToImageController extends GetxController {
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
-
     if (result != null && result.files.single.path != null) {
       selectedPdf.value = File(result.files.single.path!);
       generatedImages.clear();
@@ -35,10 +41,20 @@ class PdfToImageController extends GetxController {
 
     try {
       isLoading.value = true;
-
       generatedImages.value = await _service.convertPdfToImages(
         selectedPdf.value!,
       );
+
+      for (final img in generatedImages) {
+        RecentFilesService.to.addFile(
+          path: img.path,
+          tool: 'pdf_to_image',
+          toolLabel: 'PDF to Image',
+        );
+      }
+
+      AnalyticsService.to.logToolUsed('pdf_to_image');
+      ReviewService.to.onToolCompleted();
 
       AdService.to.showInterstitialAd(
         onDismissed: () {
@@ -60,5 +76,15 @@ class PdfToImageController extends GetxController {
     await SharePlus.instance.share(
       ShareParams(files: [XFile(file.path)]),
     );
+  }
+
+  Future<File?> saveToDevice(File file) async {
+    final saved = await FileStorageService.saveToDownloads(file);
+    RecentFilesService.to.addFile(
+      path: saved.path,
+      tool: 'pdf_to_image',
+      toolLabel: 'PDF to Image',
+    );
+    return saved;
   }
 }

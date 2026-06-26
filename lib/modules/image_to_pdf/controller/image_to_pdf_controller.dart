@@ -8,8 +8,15 @@ import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/services/ad_service.dart';
+import '../../../core/services/analytics_service.dart';
+import '../../../core/services/file_storage_service.dart';
+import '../../../core/services/recent_files_service.dart';
+import '../../../core/services/review_service.dart';
 
 class ImageToPdfController extends GetxController {
+  static ImageToPdfController get to =>
+      Get.put(ImageToPdfController(), permanent: true);
+
   final ImagePicker picker = ImagePicker();
   final ImageToPdfService imageToPdfService = ImageToPdfService();
   Rx<File?> generatedPdf = Rx<File?>(null);
@@ -22,10 +29,7 @@ class ImageToPdfController extends GetxController {
       source: ImageSource.camera,
       imageQuality: 100,
     );
-
-    if (image != null) {
-      selectedImages.add(File(image.path));
-    }
+    if (image != null) selectedImages.add(File(image.path));
   }
 
   Future<void> pickFromGallery() async {
@@ -38,7 +42,6 @@ class ImageToPdfController extends GetxController {
       allowMultiple: true,
       type: FileType.image,
     );
-
     if (result != null) {
       selectedImages.addAll(
         result.paths.whereType<String>().map((path) => File(path)),
@@ -54,9 +57,17 @@ class ImageToPdfController extends GetxController {
 
     try {
       isGenerating.value = true;
-
       final pdfFile = await imageToPdfService.createPdf(selectedImages);
       generatedPdf.value = pdfFile;
+
+      RecentFilesService.to.addFile(
+        path: pdfFile.path,
+        tool: 'image_to_pdf',
+        toolLabel: 'Image to PDF',
+      );
+
+      AnalyticsService.to.logToolUsed('image_to_pdf');
+      ReviewService.to.onToolCompleted();
 
       AdService.to.showInterstitialAd(
         onDismissed: () {
@@ -83,6 +94,17 @@ class ImageToPdfController extends GetxController {
         text: 'PDF created with DocFlow',
       ),
     );
+  }
+
+  Future<File?> saveToDevice() async {
+    if (generatedPdf.value == null) return null;
+    final saved = await FileStorageService.saveToDownloads(generatedPdf.value!);
+    RecentFilesService.to.addFile(
+      path: saved.path,
+      tool: 'image_to_pdf',
+      toolLabel: 'Image to PDF',
+    );
+    return saved;
   }
 
   void clearImages() {

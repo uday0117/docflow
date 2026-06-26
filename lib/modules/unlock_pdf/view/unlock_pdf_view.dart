@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
@@ -14,7 +16,7 @@ class UnlockPdfView extends StatefulWidget {
 }
 
 class _UnlockPdfViewState extends State<UnlockPdfView> {
-  final controller = Get.put(UnlockPdfController());
+  final controller = UnlockPdfController.to;
   final _pwdController = TextEditingController();
   bool _showPwd = false;
 
@@ -63,8 +65,16 @@ class _UnlockPdfViewState extends State<UnlockPdfView> {
                   child: DfResultCard(
                     message: 'PDF Unlocked!',
                     detail: 'Password protection removed',
-                    onOpen: () {},
-                    onShare: () {},
+                    onOpen: () => controller.unlockedFile.value != null
+                        ? OpenFilex.open(controller.unlockedFile.value!.path)
+                        : null,
+                    onShare: () => controller.unlockedFile.value != null
+                        ? SharePlus.instance.share(ShareParams(
+                            files: [XFile(controller.unlockedFile.value!.path)],
+                            text: 'Unlocked PDF from DocFlow',
+                          ))
+                        : null,
+                    onSave: controller.saveToDevice,
                     color: _color,
                   ),
                 ),

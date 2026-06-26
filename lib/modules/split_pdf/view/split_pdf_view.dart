@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/banner_ad_widget.dart';
@@ -9,7 +10,7 @@ import '../controller/split_pdf_controller.dart';
 class SplitPdfView extends StatelessWidget {
   SplitPdfView({super.key});
 
-  final controller = Get.put(SplitPdfController());
+  final controller = SplitPdfController.to;
   static const _color = AppColors.splitPdf;
 
   @override
@@ -118,10 +119,14 @@ class SplitPdfView extends StatelessWidget {
                     delegate: SliverChildBuilderDelegate(
                       (ctx, i) => Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: DfSelectedFileCard(
-                          fileName: outputs[i].path.split('/').last,
+                        child: DfResultCard(
+                          message: outputs[i].path.split('/').last,
+                          onOpen: () => controller.openFile(outputs[i]),
+                          onShare: () => SharePlus.instance.share(
+                            ShareParams(files: [XFile(outputs[i].path)]),
+                          ),
+                          onSave: () => controller.saveToDevice(outputs[i]),
                           color: _color,
-                          onRemove: null,
                         ),
                       ),
                       childCount: outputs.length,

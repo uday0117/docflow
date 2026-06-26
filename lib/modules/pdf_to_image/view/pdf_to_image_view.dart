@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +11,7 @@ import '../controller/pdf_to_image_controller.dart';
 class PdfToImageView extends StatelessWidget {
   PdfToImageView({super.key});
 
-  final controller = Get.put(PdfToImageController());
+  final controller = PdfToImageController.to;
   static const _color = AppColors.pdfToImage;
 
   @override
@@ -111,6 +113,7 @@ class PdfToImageView extends StatelessWidget {
                         index: i + 1,
                         onOpen: () => controller.openImage(images[i]),
                         onShare: () => controller.shareImage(images[i]),
+                        onSave: () => controller.saveToDevice(images[i]),
                         color: _color,
                       ),
                       childCount: images.length,
@@ -127,11 +130,12 @@ class PdfToImageView extends StatelessWidget {
   }
 }
 
-class _ImageCard extends StatelessWidget {
+class _ImageCard extends StatefulWidget {
   final dynamic file;
   final int index;
   final VoidCallback onOpen;
   final VoidCallback onShare;
+  final Future<File?> Function()? onSave;
   final Color color;
 
   const _ImageCard({
@@ -139,12 +143,33 @@ class _ImageCard extends StatelessWidget {
     required this.index,
     required this.onOpen,
     required this.onShare,
+    this.onSave,
     required this.color,
   });
 
   @override
+  State<_ImageCard> createState() => _ImageCardState();
+}
+
+class _ImageCardState extends State<_ImageCard> {
+  bool _saving = false;
+  bool _saved = false;
+
+  Future<void> _handleSave() async {
+    if (_saving || widget.onSave == null) return;
+    setState(() => _saving = true);
+    try {
+      await widget.onSave!();
+      if (mounted) setState(() { _saving = false; _saved = true; });
+    } catch (_) {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = widget.color;
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
@@ -166,7 +191,7 @@ class _ImageCard extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.file(file, fit: BoxFit.cover),
+                Image.file(widget.file, fit: BoxFit.cover),
                 Positioned(
                   top: 8,
                   left: 8,
@@ -178,7 +203,7 @@ class _ImageCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Page $index',
+                      'Page ${widget.index}',
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 11,
@@ -193,39 +218,65 @@ class _ImageCard extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: onOpen,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(Icons.open_in_new_rounded,
-                          color: color, size: 16),
-                    ),
-                  ),
+                _ActionBtn(
+                  icon: Icons.open_in_new_rounded,
+                  color: color,
+                  filled: false,
+                  onTap: widget.onOpen,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: onShare,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.share_rounded,
-                          color: Colors.white, size: 16),
-                    ),
-                  ),
+                const SizedBox(width: 6),
+                _ActionBtn(
+                  icon: Icons.share_rounded,
+                  color: color,
+                  filled: true,
+                  onTap: widget.onShare,
+                ),
+                const SizedBox(width: 6),
+                _ActionBtn(
+                  icon: _saving
+                      ? Icons.hourglass_top_rounded
+                      : _saved
+                          ? Icons.check_circle_rounded
+                          : Icons.download_rounded,
+                  color: _saved ? Colors.green : color,
+                  filled: false,
+                  onTap: _handleSave,
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ActionBtn extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final bool filled;
+  final VoidCallback onTap;
+  const _ActionBtn({
+    required this.icon,
+    required this.color,
+    required this.filled,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            color: filled ? color : color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon,
+              color: filled ? Colors.white : color, size: 16),
+        ),
       ),
     );
   }

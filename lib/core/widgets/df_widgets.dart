@@ -1,9 +1,8 @@
-/// Shared DocFlow design-system widgets used across all screens.
-library df_widgets;
-
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
 
 import '../theme/app_colors.dart';
 
@@ -332,13 +331,15 @@ class DfSelectedFileCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// Success Result Card
+// Success Result Card  (with download + progress)
 // ─────────────────────────────────────────────
-class DfResultCard extends StatelessWidget {
+class DfResultCard extends StatefulWidget {
   final String message;
   final String? detail;
   final VoidCallback onOpen;
   final VoidCallback onShare;
+  /// Optional async callback that saves the file and returns the saved [File].
+  final Future<File?> Function()? onSave;
   final Color color;
 
   const DfResultCard({
@@ -347,12 +348,68 @@ class DfResultCard extends StatelessWidget {
     this.detail,
     required this.onOpen,
     required this.onShare,
+    this.onSave,
     required this.color,
   });
 
   @override
+  State<DfResultCard> createState() => _DfResultCardState();
+}
+
+class _DfResultCardState extends State<DfResultCard> {
+  _SaveState _saveState = _SaveState.idle;
+  double _progress = 0.0;
+  File? _savedFile;
+  Timer? _progressTimer;
+
+  @override
+  void dispose() {
+    _progressTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _handleSave() async {
+    if (_saveState == _SaveState.saving || widget.onSave == null) return;
+    setState(() {
+      _saveState = _SaveState.saving;
+      _progress = 0.0;
+    });
+
+    // Animate progress up to 85% while waiting for the actual copy
+    _progressTimer = Timer.periodic(const Duration(milliseconds: 40), (t) {
+      if (!mounted) { t.cancel(); return; }
+      setState(() {
+        if (_progress < 0.85) _progress += 0.02;
+      });
+    });
+
+    try {
+      final saved = await widget.onSave!();
+      _progressTimer?.cancel();
+      if (!mounted) return;
+      setState(() {
+        _progress = 1.0;
+        _savedFile = saved;
+        _saveState = _SaveState.done;
+      });
+    } catch (e) {
+      _progressTimer?.cancel();
+      if (!mounted) return;
+      setState(() {
+        _saveState = _SaveState.idle;
+        _progress = 0.0;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Save failed: $e')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = widget.color;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -365,12 +422,12 @@ class DfResultCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: 0.25),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // ── Header row ──────────────────────────────────────
           Row(
             children: [
               Container(
@@ -379,11 +436,7 @@ class DfResultCard extends StatelessWidget {
                   color: Colors.green.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  color: Colors.green,
-                  size: 20,
-                ),
+                child: const Icon(Icons.check_rounded, color: Colors.green, size: 20),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -391,15 +444,12 @@ class DfResultCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      message,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                      ),
+                      widget.message,
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
                     ),
-                    if (detail != null)
+                    if (widget.detail != null)
                       Text(
-                        detail!,
+                        widget.detail!,
                         style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context)
@@ -414,11 +464,12 @@ class DfResultCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
+          // ── Open / Share row ─────────────────────────────────
           Row(
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: onOpen,
+                  onPressed: widget.onOpen,
                   icon: const Icon(Icons.open_in_new_rounded, size: 16),
                   label: const Text('Open'),
                   style: OutlinedButton.styleFrom(
@@ -434,7 +485,7 @@ class DfResultCard extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: onShare,
+                  onPressed: widget.onShare,
                   icon: const Icon(Icons.share_rounded, size: 16),
                   label: const Text('Share'),
                   style: ElevatedButton.styleFrom(
@@ -449,11 +500,87 @@ class DfResultCard extends StatelessWidget {
               ),
             ],
           ),
+          // ── Save / Download section ──────────────────────────
+          if (widget.onSave != null) ...[
+            const SizedBox(height: 10),
+            if (_saveState == _SaveState.idle)
+              OutlinedButton.icon(
+                onPressed: _handleSave,
+                icon: const Icon(Icons.download_rounded, size: 16),
+                label: const Text('Save to Device'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: color,
+                  side: BorderSide(color: color.withValues(alpha: 0.35)),
+                  minimumSize: const Size(0, 44),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              )
+            else if (_saveState == _SaveState.saving)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: _progress,
+                      minHeight: 8,
+                      backgroundColor: color.withValues(alpha: 0.15),
+                      valueColor: AlwaysStoppedAnimation(color),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Saving… ${(_progress * 100).toInt()}%',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.55),
+                    ),
+                  ),
+                ],
+              )
+            else if (_saveState == _SaveState.done)
+              Row(
+                children: [
+                  const Icon(Icons.check_circle_rounded,
+                      color: Colors.green, size: 18),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Saved to device',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                  if (_savedFile != null)
+                    TextButton.icon(
+                      onPressed: () => OpenFilex.open(_savedFile!.path),
+                      icon: const Icon(Icons.open_in_new_rounded, size: 15),
+                      label: const Text('Open'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: color,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                ],
+              ),
+          ],
         ],
       ),
     );
   }
 }
+
+enum _SaveState { idle, saving, done }
 
 // ─────────────────────────────────────────────
 // Section Label

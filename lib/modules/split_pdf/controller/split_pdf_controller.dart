@@ -6,9 +6,16 @@ import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/services/ad_service.dart';
+import '../../../core/services/analytics_service.dart';
+import '../../../core/services/file_storage_service.dart';
+import '../../../core/services/recent_files_service.dart';
+import '../../../core/services/review_service.dart';
 import '../service/split_pdf_service.dart';
 
 class SplitPdfController extends GetxController {
+  static SplitPdfController get to =>
+      Get.put(SplitPdfController(), permanent: true);
+
   final SplitPdfService _service = SplitPdfService();
 
   Rx<File?> selectedFile = Rx<File?>(null);
@@ -16,7 +23,7 @@ class SplitPdfController extends GetxController {
   RxBool isSplitting = false.obs;
   RxList<File> outputFiles = <File>[].obs;
 
-  final RxString splitMode = 'all'.obs; // 'all' or 'range'
+  final RxString splitMode = 'all'.obs;
   final RxInt startPage = 1.obs;
   final RxInt endPage = 1.obs;
 
@@ -25,7 +32,6 @@ class SplitPdfController extends GetxController {
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
-
     if (result == null || result.paths.isEmpty) return;
 
     final file = File(result.paths.first!);
@@ -51,7 +57,6 @@ class SplitPdfController extends GetxController {
       outputFiles.clear();
 
       List<File> files;
-
       if (splitMode.value == 'all') {
         files = await _service.splitPdf(selectedFile.value!, []);
       } else {
@@ -61,6 +66,17 @@ class SplitPdfController extends GetxController {
       }
 
       outputFiles.assignAll(files);
+
+      for (final f in files) {
+        RecentFilesService.to.addFile(
+          path: f.path,
+          tool: 'split_pdf',
+          toolLabel: 'Split PDF',
+        );
+      }
+
+      AnalyticsService.to.logToolUsed('split_pdf');
+      ReviewService.to.onToolCompleted();
 
       AdService.to.showInterstitialAd(
         onDismissed: () {
@@ -90,5 +106,15 @@ class SplitPdfController extends GetxController {
         text: 'Split PDF pages from DocFlow',
       ),
     );
+  }
+
+  Future<File?> saveToDevice(File file) async {
+    final saved = await FileStorageService.saveToDownloads(file);
+    RecentFilesService.to.addFile(
+      path: saved.path,
+      tool: 'split_pdf',
+      toolLabel: 'Split PDF',
+    );
+    return saved;
   }
 }

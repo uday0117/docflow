@@ -11,7 +11,7 @@ import '../controller/merge_pdf_controller.dart';
 class MergePdfView extends StatelessWidget {
   MergePdfView({super.key});
 
-  final controller = Get.put(MergePdfController());
+  final controller = MergePdfController.to;
   static const _color = AppColors.mergePdf;
 
   @override
@@ -52,6 +52,7 @@ class MergePdfView extends StatelessWidget {
                     detail: merged.path.split('/').last,
                     onOpen: controller.openMerged,
                     onShare: controller.shareMerged,
+                    onSave: controller.saveToDevice,
                     color: _color,
                   ),
                 ),

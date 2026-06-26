@@ -2,18 +2,26 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../constants/ad_constants.dart';
+import 'analytics_service.dart';
+import 'pro_service.dart';
 
 class AdService extends GetxService {
   static AdService get to => Get.find<AdService>();
+
+  static const _creditsKey = 'ad_skip_credits';
+
+  final _box = GetStorage();
 
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
 
   final RxBool isInterstitialReady = false.obs;
   final RxBool isRewardedReady = false.obs;
+  final RxInt adSkipCredits = 0.obs;
 
   String get _bannerUnitId =>
       kDebugMode ? AdConstants.testBannerAdUnitId : AdConstants.bannerAdUnitId;
@@ -29,9 +37,22 @@ class AdService extends GetxService {
   @override
   void onInit() {
     super.onInit();
+    adSkipCredits.value = _box.read<int>(_creditsKey) ?? 0;
     if (Platform.isAndroid) {
       loadInterstitialAd();
       loadRewardedAd();
+    }
+  }
+
+  void addAdCredits(int count) {
+    adSkipCredits.value += count;
+    _box.write(_creditsKey, adSkipCredits.value);
+  }
+
+  void _consumeCredit() {
+    if (adSkipCredits.value > 0) {
+      adSkipCredits.value -= 1;
+      _box.write(_creditsKey, adSkipCredits.value);
     }
   }
 
@@ -72,11 +93,28 @@ class AdService extends GetxService {
       onDismissed?.call();
       return;
     }
+
+    // Pro users never see ads
+    if (ProService.to.isPro.value) {
+      onDismissed?.call();
+      return;
+    }
+
+    // Spend a credit to skip this ad
+    if (adSkipCredits.value > 0) {
+      _consumeCredit();
+      onDismissed?.call();
+      return;
+    }
+
     if (_interstitialAd == null || !isInterstitialReady.value) {
       onDismissed?.call();
       loadInterstitialAd();
       return;
     }
+
+    AnalyticsService.to.logAdShown('interstitial');
+
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (ad) {
         ad.dispose();
@@ -121,11 +159,15 @@ class AdService extends GetxService {
       onRewarded();
       return;
     }
+
     if (_rewardedAd == null || !isRewardedReady.value) {
       onRewarded();
       loadRewardedAd();
       return;
     }
+
+    AnalyticsService.to.logAdShown('rewarded');
+
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (ad) {
         ad.dispose();
