@@ -1,183 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DocFlow – Privacy Policy</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f8f9fa;
-      color: #212529;
-      line-height: 1.7;
-    }
-    header {
-      background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
-      color: #fff;
-      padding: 48px 24px 36px;
-      text-align: center;
-    }
-    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; }
-    header p  { margin-top: 8px; opacity: 0.85; font-size: 0.95rem; }
-    main {
-      max-width: 820px;
-      margin: 40px auto;
-      padding: 0 24px 60px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,.08);
-      padding: 32px 36px;
-      margin-bottom: 24px;
-    }
-    h2 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #1565C0;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    h2::before {
-      content: "";
-      display: inline-block;
-      width: 4px;
-      height: 20px;
-      background: #1565C0;
-      border-radius: 2px;
-    }
-    p, li { font-size: 0.95rem; color: #495057; }
-    ul { padding-left: 20px; margin-top: 8px; }
-    li { margin-bottom: 6px; }
-    a { color: #1565C0; }
-    .badge {
-      display: inline-block;
-      background: #e3f2fd;
-      color: #1565C0;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-left: 8px;
-    }
-    footer {
-      text-align: center;
-      font-size: 0.82rem;
-      color: #adb5bd;
-      padding-bottom: 32px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocFlow - Privacy Policy</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.7;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+            color: #222;
+            background: #fafafa;
+        }
+        header {
+            background: linear-gradient(135deg, #1565C0, #0D47A1);
+            color: #fff;
+            border-radius: 16px;
+            padding: 32px 28px;
+            margin-bottom: 32px;
+        }
+        header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+        header p { margin-top: 8px; opacity: 0.85; font-size: 14px; }
+        h2 {
+            color: #1565C0;
+            margin: 32px 0 10px;
+            font-size: 18px;
+            font-weight: 700;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #BBDEFB;
+        }
+        p { margin: 10px 0; font-size: 15px; }
+        ul { margin: 10px 0 10px 20px; font-size: 15px; }
+        li { margin: 5px 0; }
+        strong { color: #1565C0; }
+        .highlight {
+            background: #FFF3E0;
+            border-left: 4px solid #FF9800;
+            padding: 14px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        .summary {
+            background: #E3F2FD;
+            border-left: 4px solid #1565C0;
+            padding: 14px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+        }
+        .contact {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .contact ul { list-style: none; margin-left: 0; }
+        .contact li { padding: 4px 0; }
+        .contact a { color: #1565C0; text-decoration: none; }
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            font-size: 13px;
+            color: #999;
+        }
+        footer a { color: #1565C0; text-decoration: none; }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>Privacy Policy</h1>
+        <p>DocFlow – Smart PDF Tools &nbsp;|&nbsp; Effective Date: June 26, 2026</p>
+    </header>
 
-<header>
-  <h1>DocFlow – Privacy Policy</h1>
-  <p>Last updated: June 26, 2026 &nbsp;|&nbsp; Effective immediately</p>
-</header>
-
-<main>
-
-  <div class="card">
     <h2>Introduction</h2>
-    <p>
-      DocFlow ("we", "our", or "the app") is a PDF utility application developed by
-      <strong>UK Solutions</strong>. This Privacy Policy explains what information we collect,
-      how we use it, and your rights regarding that data. By using DocFlow you agree to the
-      practices described here.
-    </p>
-  </div>
+    <p>UK Solutions ("us", "we", or "our") operates the <strong>DocFlow</strong> mobile application ("Service"). This Privacy Policy explains how information may be collected, used, and disclosed when you use the Service.</p>
 
-  <div class="card">
-    <h2>Information We Collect</h2>
-    <p>DocFlow is a <strong>locally-processed</strong> app. All PDF and image operations happen
-       entirely on your device. We do <strong>not</strong> upload your documents to any server.</p>
+    <h2>Information Collection and Use</h2>
+    <p>DocFlow is a PDF tools application that primarily operates locally on your device.</p>
+    <div class="highlight">
+        <strong>We do not collect, access, upload, or store your PDF files, documents, or any file content on our servers.</strong>
+    </div>
+    <p>To improve application quality, reliability, analytics, and advertising functionality, certain third-party services integrated into the app may automatically collect limited information such as:</p>
     <ul>
-      <li><strong>Files you select</strong> – PDFs and images are read temporarily to perform the
-          requested operation (merge, split, compress, convert, protect, unlock) and are never
-          transmitted off your device.</li>
-      <li><strong>Device permissions</strong> – We request storage/media access solely to let you
-          pick files and save results. Camera access is used only for scanning documents when you
-          choose that option.</li>
-      <li><strong>Usage &amp; analytics data</strong> – We use <strong>Google Firebase Analytics</strong>
-          (anonymised, aggregated) to understand which features are used so we can improve the app.</li>
-      <li><strong>Advertising identifiers</strong> – We use <strong>Google AdMob</strong> to display
-          ads. AdMob may collect advertising identifiers (GAID) and related signals in accordance
-          with Google's privacy policy.</li>
+        <li>Device information (model, OS version)</li>
+        <li>Advertising identifiers</li>
+        <li>App interaction and usage events</li>
+        <li>Crash logs and diagnostics</li>
+        <li>Performance information</li>
+        <li>Approximate location derived from IP address</li>
     </ul>
-  </div>
+    <p>This information is collected by third-party providers and is not used by UK Solutions to personally identify users.</p>
 
-  <div class="card">
-    <h2>How We Use Information</h2>
+    <h2>Data Storage</h2>
+    <p>All PDFs, images, and generated files are stored locally on your device.</p>
     <ul>
-      <li>To provide PDF processing features entirely on-device.</li>
-      <li>To show relevant advertisements via Google AdMob.</li>
-      <li>To monitor app stability and crashes via Firebase Crashlytics.</li>
-      <li>To improve the app based on anonymised usage patterns.</li>
+        <li>Your files remain on your device</li>
+        <li>No files are uploaded to our servers</li>
+        <li>Your data is not accessible to UK Solutions</li>
+        <li>You maintain complete control over your files</li>
+        <li>Output files are saved only with your permission</li>
+        <li>The app does not provide cloud backup services</li>
     </ul>
-  </div>
 
-  <div class="card">
+    <h2>Permissions</h2>
+    <p>DocFlow may request the following permissions:</p>
+    <ul>
+        <li><strong>Photos / Media / Storage:</strong> To select input files (images, PDFs) and save output files to your device</li>
+        <li><strong>Internet:</strong> Required for displaying advertisements and analytics</li>
+        <li><strong>Notifications (if applicable):</strong> For task completion and app-related notifications</li>
+    </ul>
+    <p>Permissions are requested only when required for core app functionality.</p>
+
+    <h2>PDF & File Processing</h2>
+    <p>All PDF and file processing operations in DocFlow — including merging, splitting, compressing, converting, protecting, and unlocking PDFs — occur entirely on your device. This includes:</p>
+    <ul>
+        <li>PDF merging and splitting</li>
+        <li>PDF compression</li>
+        <li>Image to PDF conversion</li>
+        <li>PDF to image export</li>
+        <li>PDF password protection and removal</li>
+    </ul>
+    <p>No file content is transmitted to UK Solutions servers during any of these operations.</p>
+
+    <h2>Advertising</h2>
+    <p>DocFlow displays advertisements through <strong>Google AdMob</strong>. Advertising revenue helps support ongoing maintenance, feature development, and free access to the application.</p>
+    <p>Google AdMob may collect and process certain information, including:</p>
+    <ul>
+        <li>Advertising identifiers</li>
+        <li>Device information</li>
+        <li>App interaction information</li>
+        <li>Approximate location information</li>
+    </ul>
+    <p>Advertisements may be personalized or non-personalized depending on applicable laws, user consent, and device settings. You may opt out of personalized advertising through your device's Google Settings &gt; Ads.</p>
+
+    <h2>Sharing Documents</h2>
+    <p>DocFlow allows users to share output files using Android's built-in sharing functionality.</p>
+    <ul>
+        <li>Sharing is initiated only by the user</li>
+        <li>Files are shared directly from your device</li>
+        <li>We do not monitor or track shared files</li>
+        <li>Third-party apps used for sharing have their own privacy policies</li>
+    </ul>
+
     <h2>Third-Party Services</h2>
-    <p>DocFlow uses the following third-party SDKs, each governed by their own privacy policies:</p>
+    <p>DocFlow uses trusted third-party services that may collect information to improve functionality and support advertising.</p>
     <ul>
-      <li><a href="https://policies.google.com/privacy" target="_blank">Google AdMob</a> – advertising</li>
-      <li><a href="https://firebase.google.com/support/privacy" target="_blank">Google Firebase</a> – analytics &amp; crash reporting</li>
+        <li><strong>Google AdMob</strong> – Advertising services</li>
+        <li><strong>Firebase Analytics</strong> – Anonymous usage analytics</li>
+        <li><strong>Firebase Crashlytics</strong> – Crash reporting and diagnostics</li>
     </ul>
-  </div>
+    <p>These providers may collect information in accordance with their own privacy policies.</p>
 
-  <div class="card">
-    <h2>Data Retention &amp; Security</h2>
-    <p>
-      We do not store your documents. Temporary copies created during processing are deleted
-      immediately after the operation completes. Advertising identifiers are managed by Google
-      and subject to their data-retention policies. We apply industry-standard practices to
-      protect any data processed within the app.
-    </p>
-  </div>
+    <h2>Analytics and Diagnostics</h2>
+    <p>DocFlow uses Firebase Analytics and Firebase Crashlytics to:</p>
+    <ul>
+        <li>Understand feature usage</li>
+        <li>Improve app performance</li>
+        <li>Identify crashes and bugs</li>
+        <li>Improve user experience</li>
+    </ul>
+    <p>Analytics and diagnostic information does not include your PDF or file content.</p>
 
-  <div class="card">
+    <h2>Data Security</h2>
+    <p>Since your files remain on your device:</p>
+    <ul>
+        <li>Your file security depends on your device security</li>
+        <li>We recommend using device lock features</li>
+        <li>UK Solutions cannot recover lost files</li>
+        <li>We recommend backing up important files using your preferred storage solution</li>
+    </ul>
+
     <h2>Children's Privacy</h2>
-    <p>
-      DocFlow is not directed at children under 13. We do not knowingly collect personal
-      information from children. If you believe a child has provided us with personal
-      information, please contact us and we will delete it promptly.
-    </p>
-  </div>
+    <p>Our Service is intended for general audiences. We do not knowingly collect personal information from children. However, third-party services such as Google AdMob, Firebase Analytics, and Firebase Crashlytics may process limited technical information as described in this Privacy Policy.</p>
 
-  <div class="card">
     <h2>Your Rights</h2>
+    <p>You maintain full control over your files.</p>
     <ul>
-      <li>You can revoke file or camera permissions at any time in Android Settings → Apps → DocFlow → Permissions.</li>
-      <li>You can opt out of personalised ads via Android Settings → Google → Ads → Opt out of Ads Personalisation.</li>
-      <li>You may contact us to request information about any data we hold related to your device.</li>
+        <li>You may delete files at any time</li>
+        <li>You may uninstall the application at any time</li>
+        <li>You may manage permissions through device settings</li>
+        <li>You may reset advertising identifiers through device settings</li>
+        <li>You may control advertising preferences through your Google account settings</li>
     </ul>
-  </div>
 
-  <div class="card">
-    <h2>Changes to This Policy</h2>
-    <p>
-      We may update this Privacy Policy from time to time. When we do, we will revise the
-      "Last updated" date at the top of this page. Continued use of the app after changes
-      constitutes acceptance of the revised policy.
-    </p>
-  </div>
+    <h2>Changes to This Privacy Policy</h2>
+    <p>We may update this Privacy Policy periodically. Changes will be posted on this page along with an updated revision date. We encourage you to review this page periodically.</p>
 
-  <div class="card">
     <h2>Contact Us</h2>
-    <p>
-      If you have any questions about this Privacy Policy, please contact us at:<br/>
-      <a href="mailto:support@uksolutions.dev">support@uksolutions.dev</a>
-    </p>
-  </div>
+    <div class="contact">
+        <p>If you have questions regarding this Privacy Policy, please contact:</p>
+        <ul>
+            <li><strong>Email:</strong> <a href="mailto:apps.uksolutions@gmail.com">apps.uksolutions@gmail.com</a></li>
+            <li><strong>Website:</strong> <a href="https://ukrsolutions.in" target="_blank">ukrsolutions.in</a></li>
+            <li><strong>Developer:</strong> UK Solutions</li>
+            <li><strong>Location:</strong> Bangalore, Karnataka, India</li>
+        </ul>
+    </div>
 
-</main>
+    <div class="summary">
+        <strong>Summary:</strong> Your PDF files and documents remain on your device and are never uploaded to UK Solutions servers. All PDF operations (merge, split, compress, convert, protect, unlock) happen entirely on your device. DocFlow uses Google AdMob, Firebase Analytics, and Firebase Crashlytics to support advertising, analytics, diagnostics, and application improvements. These services may collect limited technical and advertising-related information in accordance with their respective privacy policies.
+    </div>
 
-<footer>
-  &copy; 2026 UK Solutions &nbsp;·&nbsp; DocFlow &nbsp;·&nbsp; All rights reserved
-</footer>
-
+    <footer>
+        <p>&copy; 2026 UK Solutions &nbsp;|&nbsp; <a href="https://ukrsolutions.in" target="_blank">ukrsolutions.in</a> &nbsp;|&nbsp; <a href="https://play.google.com/store/apps/details?id=com.uksolutions.docflow" target="_blank">Google Play</a></p>
+    </footer>
 </body>
 </html>
